@@ -6,7 +6,7 @@ from airflow.operators.bash import BashOperator
 PROJECT = '/opt/airflow/project'
 
 def failure_callback(context):
-    # TODO Week 7: write a concise failure record or print meaningful context.
+    # TODO Goal 4: write a concise failure record or print meaningful context.
     print('TASK FAILED:', context['task_instance'].task_id)
 
 DEFAULT_ARGS = {
@@ -46,6 +46,6 @@ with DAG(
         bash_command=f'cd {PROJECT} && PIPELINE_RUN_ID="{{{{ run_id }}}}" python -m src.cli validate',
     )
 
-    # TODO Week 7: confirm dependencies, timeouts, parameter usage,
+    # TODO Goal 4: confirm dependencies, timeouts, parameter usage,
     # and a deliberate failure/recovery experiment.
     extract >> transform >> load >> validate
