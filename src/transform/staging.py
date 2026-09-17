@@ -14,4 +14,4 @@ def build_staging(raw_dir, run_id: str):
 
     Return a dict of staging DataFrames and a quarantine DataFrame.
     """
-    raise NotImplementedError('Implement Week 5 staging transformations')
+    raise NotImplementedError('Implement Goal 2 staging transformations')
