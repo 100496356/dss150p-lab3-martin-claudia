@@ -1,15 +1,15 @@
-# DSS150P Weeks 4-7 Integrated Laboratory Starter Repository
+# DSS150P Laboratory 3 Starter Repository
 
 This repository supports Module 2: Pipeline Construction, Storage, and Orchestration.
 It is intentionally incomplete. Students must implement the marked TODOs and document their decisions.
 
 ## Main progression
-- Week 4: reproducible environment, modularization, Git, Docker, configuration
-- Week 5: raw -> staging -> curated transformations; audit/error handling; rerun-safe loading
-- Week 6: CSV/JSON/Parquet/PostgreSQL comparison; partitioning; selected-partition load
-- Week 7: Apache Airflow DAG for extract -> transform -> load -> validate
+- Goal 1: reproducible environment, modularization, Git, Docker, configuration
+- Goal 2: raw -> staging -> curated transformations; audit/error handling; rerun-safe loading
+- Goal 3: CSV/JSON/Parquet/PostgreSQL comparison; partitioning; selected-partition load
+- Goal 4: Apache Airflow DAG for extract -> transform -> load -> validate
 
-Start with `DSS150P_Weeks4_7_Integrated_Laboratory_Activity.docx`.
+Start with `DSS150P_Laboratory_Activity_3.pdf`.
 
 ## Recommended commands
 ```bash
@@ -27,7 +27,7 @@ docker compose up -d postgres
 docker compose run --rm pipeline python -m src.cli validate-env
 ```
 
-Airflow in Week 7:
+Airflow in Goal 4:
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.airflow.yml up airflow-init
 docker compose -f docker-compose.yml -f docker-compose.airflow.yml up -d airflow-webserver airflow-scheduler
