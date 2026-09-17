@@ -4,9 +4,9 @@ def upsert_curated(df, run_id: str) -> int:
     Requirement: order_id is the conflict key. A rerun with unchanged records
     must not create duplicate business keys.
     """
-    raise NotImplementedError('Implement Week 5 PostgreSQL UPSERT')
+    raise NotImplementedError('Implement Goal 2 PostgreSQL UPSERT')
 
 
 def load_partition(df, year: int, month: int, run_id: str) -> int:
     """Load only a selected year/month partition and record audit.partition_loads."""
-    raise NotImplementedError('Implement Week 6 selected-partition load')
+    raise NotImplementedError('Implement Goal 3 selected-partition load')
