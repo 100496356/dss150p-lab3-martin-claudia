@@ -6,4 +6,4 @@ def build_curated(staging: dict, run_id: str):
 
     Orphan customer/product references must be quarantined, not silently dropped.
     """
-    raise NotImplementedError('Implement Week 5 curated transformation')
+    raise NotImplementedError('Implement Goal 2 curated transformation')
