@@ -8,7 +8,8 @@ from src.extract.files import extract_sources
 from src.transform.staging import build_staging
 from src.transform.curated import build_curated
 from src.validate.quality import validate_curated
-from src.load.postgres import upsert_curated, record_run_start, record_run_complete
+from src.load.postgres import upsert_curated, record_run_start, record_run_complete, load_partition
+from src.benchmark.storage import run_benchmark, write_partitioned_parquet
 
 # Small state file so that separate CLI invocations (e.g. `transform` after
 # `extract`, or a standalone `load` after an earlier `run-all`) can find the
@@ -185,6 +186,26 @@ def cmd_run_all():
         raise
 
 
+def cmd_benchmark(repeats: int):
+    transform_run_id = _require_run_id('latest_transform_run_id')
+    curated_path = path_for('curated_dir') / f'run_id={transform_run_id}' / 'sales_order_lines.parquet'
+    results = run_benchmark(curated_path, path_for('benchmark_dir'), repeats=repeats)
+    print(f'[benchmark] wrote {path_for("benchmark_dir") / "benchmark_results.csv"}')
+    print(results.to_string(index=False))
+
+
+def cmd_load_partition(year: int, month: int):
+    transform_run_id = _require_run_id('latest_transform_run_id')
+    curated_path = path_for('curated_dir') / f'run_id={transform_run_id}' / 'sales_order_lines.parquet'
+    curated_df = pd.read_parquet(curated_path)
+
+    # Also (re)write the full partitioned Parquet layout for Task C evidence.
+    write_partitioned_parquet(curated_df, path_for('partition_dir'))
+
+    n = load_partition(curated_df, year, month, transform_run_id)
+    print(f'[load-partition] year={year} month={month} rows_upserted={n}')
+
+
 def main():
     parser = argparse.ArgumentParser(description='DSS150P modular pipeline')
     sub = parser.add_subparsers(dest='command', required=True)
@@ -214,9 +235,12 @@ def main():
         cmd_validate(); return
     if args.command == 'run-all':
         cmd_run_all(); return
+    if args.command == 'benchmark':
+        cmd_benchmark(args.repeats); return
+    if args.command == 'load-partition':
+        cmd_load_partition(args.year, args.month); return
 
-    # benchmark / load-partition are implemented in Goal 3
-    raise NotImplementedError(f'Command "{args.command}" is implemented in Goal 3')
+    raise NotImplementedError(f'Unknown command: {args.command}')
 
 if __name__ == '__main__':
     main()

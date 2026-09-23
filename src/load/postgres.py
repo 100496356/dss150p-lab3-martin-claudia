@@ -1,4 +1,5 @@
 import psycopg
+import pandas as pd
 from src.config import DB
 
 _COLUMNS = [
@@ -98,4 +99,27 @@ def upsert_curated(df, run_id: str) -> int:
 
 def load_partition(df, year: int, month: int, run_id: str) -> int:
     """Load only a selected year/month partition and record audit.partition_loads."""
-    raise NotImplementedError('Implement Goal 3 selected-partition load')
+    from src.common.audit import utc_now_iso
+
+    ts = pd.to_datetime(df['order_timestamp'], utc=True)
+    partition_df = df[(ts.dt.year == year) & (ts.dt.month == month)]
+
+    n = upsert_curated(partition_df, run_id)
+
+    partition_key = f'{year:04d}-{month:02d}'
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO audit.partition_loads (partition_key, loaded_at_utc, row_count, pipeline_run_id)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (partition_key) DO UPDATE SET
+                    loaded_at_utc = EXCLUDED.loaded_at_utc,
+                    row_count = EXCLUDED.row_count,
+                    pipeline_run_id = EXCLUDED.pipeline_run_id
+                """,
+                (partition_key, utc_now_iso(), n, run_id),
+            )
+        conn.commit()
+
+    return n
