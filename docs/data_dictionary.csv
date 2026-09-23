@@ -1,0 +1,25 @@
+layer,column_name,data_type,nullable,description,source_field,transformation_rule
+curated,order_id,TEXT,false,Unique identifier for one order line; primary key and UPSERT conflict key,orders.order_id,Copied as-is from staging orders
+curated,customer_id,TEXT,false,Identifier of the customer who placed the order,orders.customer_id,Copied as-is from staging orders
+curated,product_id,TEXT,false,Identifier of the product ordered,orders.product_id,Copied as-is from staging orders
+curated,order_timestamp,TIMESTAMPTZ,false,When the order was placed (UTC),orders.order_timestamp,Parsed to UTC datetime in staging
+curated,customer_city,TEXT,true,Customer's city at time of curation,customers.city,Trimmed and title-cased in staging; left-joined onto orders
+curated,customer_tier,TEXT,true,Customer's loyalty/segment tier,customers.customer_tier,Left-joined onto orders from staged customers
+curated,product_name,TEXT,true,Display name of the product,products_reference.name,"Left-joined from the full product reference (existence-only, not price-filtered) so a product with a bad catalog price is still described correctly"
+curated,category,TEXT,true,Product category,products_reference.category.name,Flattened from nested JSON in staging; left-joined
+curated,brand,TEXT,true,Product brand,products_reference.brand,Left-joined from staged product reference
+curated,quantity,INTEGER,false,Number of units ordered,orders.quantity,Validated in staging to be numeric and within 1 to 20; invalid rows quarantined before reaching curated
+curated,unit_price,"NUMERIC(14,2)",false,"Price per unit at the time of this order, not the product's current catalog price",orders.unit_price,Copied as-is from staging orders; intentionally NOT taken from the product catalog
+curated,discount_pct,"NUMERIC(6,4)",false,Discount percentage applied to this order line,orders.discount_pct,Copied as-is from staging orders
+curated,gross_amount,"NUMERIC(16,2)",false,quantity multiplied by unit_price,Calculated,Computed in curated transformation
+curated,discount_amount,"NUMERIC(16,2)",false,gross_amount multiplied by discount_pct,Calculated,Computed in curated transformation
+curated,net_amount,"NUMERIC(16,2)",false,gross_amount minus discount_amount,Calculated,Computed in curated transformation
+curated,status,TEXT,false,Order status,orders.status,Validated in staging against the allowed-status list; invalid rows quarantined
+curated,source_updated_at,TIMESTAMPTZ,false,updated_at of the source order record this row reflects,orders.updated_at,Copied from the staging orders row used to build this curated row
+curated,pipeline_run_id,TEXT,false,Identifier of the pipeline run that produced this row,Generated (Airflow run_id or CLI-generated run id),Stamped by src/common/audit.new_run_id(); consistent across all 4 stages of one run
+curated,processed_at_utc,TIMESTAMPTZ,false,When this row was processed by the curated transformation (UTC),Generated,Set via utc_now_iso() inside build_curated()
+curated,record_hash,TEXT,false,"Deterministic SHA-256 hash of this row's business content, excluding pipeline_run_id and processed_at_utc",Calculated,"Used as the UPSERT change-detection key: a rerun with unchanged business data leaves record_hash, and therefore the row, untouched"
+staging,customer_id,TEXT,false,Business key for a customer; kept unique via latest-updated_at deduplication,customers.customer_id,Deduplicated in staging; duplicate-version rows found during profiling (e.g. C00120) resolved by keeping the greatest updated_at
+staging,product_id,TEXT,false,Business key for a product,products.product_id,"Deduplicated in staging (one duplicate found, P0300)"
+quarantine,quarantine_reason,TEXT,false,"Human-readable reason a record was rejected, e.g. invalid_or_negative_unit_price or orphan_product_reference",N/A (pipeline-generated),Assigned by staging/curated validation logic
+quarantine,source_dataset,TEXT,false,Which dataset/stage produced this quarantined record,N/A (pipeline-generated),Assigned by staging/curated validation logic
