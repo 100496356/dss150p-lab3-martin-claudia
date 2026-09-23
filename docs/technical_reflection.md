@@ -1,0 +1,9 @@
+# Technical Reflection
+
+**Modularity.** Splitting the pipeline into `extract/`, `transform/`, `load/`, `validate/`, `benchmark/` meant each stage could be built and tested against real data on its own before anything was wired together — I caught a real bug this way (the product-price quarantine cascading into 101 false "orphan" orders) while testing `curated.py` alone, well before it ever touched Airflow or Postgres.
+
+**Idempotency.** The whole pipeline assumes any stage might run twice — because with retries, it will. `extract_sources()` skips files whose content hash was already seen; `upsert_curated()` skips rows whose `record_hash` hasn't changed. Both were checked against real repeated runs (49,996 rows, `COUNT(*) = COUNT(DISTINCT order_id)` after 3 separate loads, and Postgres `xmin` unchanged confirming rows weren't even rewritten, not just deduplicated).
+
+**Storage trade-offs.** No format won on everything — Parquet was smallest and fastest to read, PostgreSQL's filtered queries beat everything on returning less data over the wire, JSON Lines was the most append-friendly despite being the largest on disk. Picking one depends on the workload: analytics reads want Parquet, an append-only event stream wants JSON Lines, ad-hoc filtered queries with indexing potential want Postgres.
+
+**Orchestration vs. business logic.** Airflow's DAG never contains transformation code — every task just shells out to `python -m src.cli <command>`. This meant the exact same commands could be run and debugged locally, in a plain Docker container, or inside Airflow, without three different implementations to keep in sync. It also meant the real failure I hit (a permissions error between two containers) was a pure infrastructure problem, fixable with `chmod`, with zero changes needed to the pipeline logic itself.

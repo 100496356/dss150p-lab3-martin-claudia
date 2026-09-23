@@ -34,8 +34,19 @@
 - DAG ID: `dss150p_sales_pipeline`
 - Schedule: `0 2 * * *` (daily, 02:00 UTC)
 - Parameters used: `run_mode=full` (first successful run), then `run_mode=partition, year=2026, month=1` (second successful run)
-- Successful run ID (full mode): `manual__2026-09-23T09:03:13+00:00` — all 4 tasks (`extract`, `transform`, `load`, `validate`) succeeded
+- Successful run ID (full mode): `manual__2026-09-23T09:03:13+00:00` — all 4 tasks (`extract`, `transform`, `load`, `validate`) succeeded — see `docs/screenshots/goal4_run_success.png`
 - Successful run ID (partition mode): `manual__2026-09-23T09:12:17+00:00` — confirmed via `audit.partition_loads` showing `pipeline_run_id='manual__2026-09-23T09:12:17+00:00'`
 - Deliberate failure run ID: `manual__2026-09-23T08:24:12+00:00` — `extract` task failed after 3 attempts with `PermissionError: [Errno 13] Permission denied` on `data/raw/run_id=...`, caused by the `data/` directory having been created with root ownership by an earlier `docker compose run` invocation, which the Airflow container's own user could not write into
-- Retry/failure-handling evidence: task retried automatically per `retries=2` (3 total attempts observed in task logs, `attempt=1.log` through `attempt=3.log`); `on_failure_callback` printed `TASK FAILED: dag_id=... task_id=extract run_id=... try_number=3 exception=...` to the task log on final failure; downstream tasks (`transform`, `load`, `validate`) correctly marked `upstream_failed` rather than attempting to run
+- Retry/failure-handling evidence: task retried automatically per `retries=2` (3 total attempts observed in task logs, `attempt=1.log` through `attempt=3.log`); `on_failure_callback` printed `TASK FAILED: dag_id=... task_id=extract run_id=... try_number=3 exception=...` to the task log on final failure; downstream tasks (`transform`, `load`, `validate`) correctly marked `upstream_failed` rather than attempting to run — see `docs/screenshots/goal4_run_failed.png` and `docs/screenshots/goal4_failure_detail.png`
 - Final recovery run ID: `manual__2026-09-23T09:03:13+00:00` — after running `chmod -R 777 data/` to fix the ownership/permission mismatch between the `pipeline` and Airflow containers, this run succeeded end-to-end with no code changes needed
+
+### Known issue and fix: cross-container permission error
+
+If `data/` was ever populated by `docker compose run --rm pipeline ...` (which writes as root) before Airflow is started, the Airflow containers (running as a different user) cannot write into those same directories, and `extract` fails with `PermissionError: [Errno 13] Permission denied`. This matches the "Permission error in Airflow logs" row in the lab's own Troubleshooting Guide (Section 14).
+
+**Fix, run once from the project root before starting Airflow (or after hitting this error):**
+```
+docker run --rm -v "${PWD}:/app" busybox chmod -R 777 /app/data
+```
+This is a one-time environment fix, not a workaround baked into the pipeline code — the pipeline logic itself required no changes.
+
