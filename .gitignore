@@ -1,0 +1,26 @@
+# Secrets / environment-specific
+.env
+
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Generated pipeline data (reproducible from data/source + code — not committed).
+# data/source/ itself IS tracked; only the pipeline-generated layers are ignored.
+data/raw/
+data/staging/
+data/curated/
+data/quarantine/
+data/benchmarks/
+data/partitioned/
+
+# Airflow runtime artifacts, if run locally outside Docker
+logs/
+airflow.db
+airflow-webserver.pid
+
+# OS/editor noise
+.DS_Store
+.vscode/
