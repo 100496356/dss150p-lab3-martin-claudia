@@ -24,3 +24,5 @@ airflow-webserver.pid
 # OS/editor noise
 .DS_Store
 .vscode/
+
+data/_pipeline_state.json
