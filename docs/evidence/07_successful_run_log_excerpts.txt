@@ -1,0 +1,24 @@
+################ evidence_01_partition_2026_01b
+[extract] run_id=evidence_01_partition_2026_01b raw_dir=/home/claude/lab3/data/raw/run_id=evidence_01_partition_2026_01b csv_data_rows={'customers.csv': 3003, 'orders.csv': 50005}
+[load-partition] order_year=2026/order_month=01 run_id=evidence_01_partition_2026_01b {'input_rows': 2506, 'inserted': 2506, 'updated': 0, 'unchanged': 0}
+[load-partition] rows in partition=2506 rows affected=2506
+[transform] run_id=evidence_01_partition_2026_01b staging={'customers': 3000, 'products': 599, 'orders': 49998} curated=49897 quarantined=104
+[validate] run_id=evidence_01_partition_2026_01b OK - partition 2026-01: curated=2506, postgres=2506
+################ evidence_02_full_success
+[extract] run_id=evidence_02_full_success raw_dir=/home/claude/lab3/data/raw/run_id=evidence_02_full_success csv_data_rows={'customers.csv': 3003, 'orders.csv': 50005}
+[load] run_id=evidence_02_full_success {'input_rows': 49897, 'inserted': 47391, 'updated': 0, 'unchanged': 2506}
+[load] rows affected (inserted+updated)=47391
+[transform] run_id=evidence_02_full_success staging={'customers': 3000, 'products': 599, 'orders': 49998} curated=49897 quarantined=104
+[validate] run_id=evidence_02_full_success OK - full table: curated=49897, postgres=49897
+################ evidence_03_full_rerun_idempotent
+[extract] run_id=evidence_03_full_rerun_idempotent raw_dir=/home/claude/lab3/data/raw/run_id=evidence_03_full_rerun_idempotent csv_data_rows={'customers.csv': 3003, 'orders.csv': 50005}
+[load] run_id=evidence_03_full_rerun_idempotent {'input_rows': 49897, 'inserted': 0, 'updated': 0, 'unchanged': 49897}
+[load] rows affected (inserted+updated)=0
+[transform] run_id=evidence_03_full_rerun_idempotent staging={'customers': 3000, 'products': 599, 'orders': 49998} curated=49897 quarantined=104
+[validate] run_id=evidence_03_full_rerun_idempotent OK - full table: curated=49897, postgres=49897
+################ evidence_06_recovery
+[extract] run_id=evidence_06_recovery raw_dir=/home/claude/lab3/data/raw/run_id=evidence_06_recovery csv_data_rows={'customers.csv': 3003, 'orders.csv': 50005}
+[load] run_id=evidence_06_recovery {'input_rows': 49897, 'inserted': 0, 'updated': 0, 'unchanged': 49897}
+[load] rows affected (inserted+updated)=0
+[transform] run_id=evidence_06_recovery staging={'customers': 3000, 'products': 599, 'orders': 49998} curated=49897 quarantined=104
+[validate] run_id=evidence_06_recovery OK - full table: curated=49897, postgres=49897

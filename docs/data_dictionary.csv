@@ -1,0 +1,35 @@
+layer,column_name,data_type,nullable,description,source_field,transformation_rule
+staging.customers,customer_id,TEXT,NO,Customer business key,customers.customer_id,Deduplicated: keep the row with the greatest updated_at
+staging.customers,email,TEXT,YES,Customer email,customers.email,Trimmed and lower-cased; empty string -> NULL; email_valid flag added
+staging.customers,city,TEXT,YES,Customer city,customers.city,Trimmed and title-cased
+staging.customers,customer_tier,TEXT,YES,Loyalty tier,customers.customer_tier,Trimmed and title-cased
+staging.customers,created_at / updated_at,TIMESTAMPTZ,NO,Record timestamps,customers.created_at / updated_at,Parsed as UTC
+staging.products,product_id,TEXT,NO,Product business key,products.product_id,Deduplicated: keep the row with the greatest updated_at
+staging.products,category,TEXT,YES,Product category,products.category.name,Nested object flattened
+staging.products,department,TEXT,YES,Product department,products.category.department,Nested object flattened
+staging.products,unit_price,NUMERIC,NO,List price,products.unit_price,Must be > 0; otherwise quarantined (invalid_unit_price)
+staging.orders,order_id,TEXT,NO,Order business key,orders.order_id,Deduplicated: keep the row with the greatest updated_at
+staging.orders,quantity,INTEGER,NO,Units ordered,orders.quantity,Must be between 1 and 20 (config); otherwise quarantined
+staging.orders,status,TEXT,NO,Order status,orders.status,Trimmed and upper-cased; must be in allowed list; otherwise quarantined
+staging.orders,discount_pct,NUMERIC,NO,Discount fraction,orders.discount_pct,Must be between 0 and 1; otherwise quarantined
+staging.*,pipeline_run_id,TEXT,NO,Run that produced the row,-,Audit column added in staging
+staging.*,staged_at_utc,TIMESTAMPTZ,NO,When the row was staged,-,Audit column added in staging
+curated.sales_order_lines,order_id,TEXT,NO,Primary key / UPSERT conflict key,staging.orders.order_id,One row per order
+curated.sales_order_lines,customer_id,TEXT,NO,Customer reference,staging.orders.customer_id,Orders with an unknown customer are quarantined (orphan_customer)
+curated.sales_order_lines,product_id,TEXT,NO,Product reference,staging.orders.product_id,Orders with an unknown product are quarantined (orphan_product / product_quarantined_invalid_price)
+curated.sales_order_lines,order_timestamp,TIMESTAMPTZ,NO,When the order was placed,staging.orders.order_timestamp,UTC
+curated.sales_order_lines,customer_city,TEXT,YES,Customer city,staging.customers.city,Joined on customer_id
+curated.sales_order_lines,customer_tier,TEXT,YES,Customer tier,staging.customers.customer_tier,Joined on customer_id
+curated.sales_order_lines,product_name / category / brand,TEXT,YES,Product attributes,staging.products,Joined on product_id
+curated.sales_order_lines,quantity,INTEGER,NO,Units ordered,staging.orders.quantity,-
+curated.sales_order_lines,unit_price,NUMERIC(14,2),NO,Price per unit in the order,staging.orders.unit_price,-
+curated.sales_order_lines,discount_pct,NUMERIC(6,4),NO,Discount fraction,staging.orders.discount_pct,-
+curated.sales_order_lines,gross_amount,NUMERIC(16,2),NO,quantity x unit_price,derived,round(quantity * unit_price; 2)
+curated.sales_order_lines,discount_amount,NUMERIC(16,2),NO,gross_amount x discount_pct,derived,round(gross_amount * discount_pct; 2)
+curated.sales_order_lines,net_amount,NUMERIC(16,2),NO,gross_amount - discount_amount,derived,Validated: never negative and equals gross - discount
+curated.sales_order_lines,status,TEXT,NO,Order status,staging.orders.status,-
+curated.sales_order_lines,source_updated_at,TIMESTAMPTZ,NO,Last update in the source,staging.orders.updated_at,Renamed
+curated.sales_order_lines,pipeline_run_id,TEXT,NO,Run that last wrote the row,-,Audit column
+curated.sales_order_lines,processed_at_utc,TIMESTAMPTZ,NO,When the curated row was built,-,Audit column
+curated.sales_order_lines,record_hash,TEXT,NO,SHA-256 of the business columns,derived,Excludes audit columns so unchanged rows keep the same hash; UPSERT only updates when the hash changes
+files only,order_year / order_month,INTEGER,NO,Partition columns,derived from order_timestamp (UTC),Used for data/partitioned/ folders; not stored in the PostgreSQL table

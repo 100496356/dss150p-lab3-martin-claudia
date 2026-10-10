@@ -1,0 +1,5 @@
+storage_type,file_size_bytes,write_seconds,full_read_seconds,filtered_read_seconds,row_count,notes
+CSV,14505714,1.1214,0.214,0.2122,49897,"Text, row-based; no types stored, the whole file is parsed even for a filter."
+JSON Lines,31196122,0.8575,0.6824,0.6761,49897,"Text, one object per line; repeats every key name, so it is the largest and slowest."
+Parquet,5503765,0.0981,0.0636,0.0306,49897,"Columnar, compressed and typed; filters are pushed down to row groups."
+PostgreSQL,14163968,1.2709,0.341,0.0625,49897,Table size incl. TOAST; write = COPY; reads go through the network protocol.

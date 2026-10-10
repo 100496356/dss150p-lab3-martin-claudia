@@ -1,0 +1,5 @@
+dag_id                  execution_date             task_id    state    start_date                        end_date
+dss150p_sales_pipeline  2026-10-10T16:45:42+00:00  extract    success  2026-10-10T16:46:03.189112+00:00  2026-10-10T16:46:03.960523+00:00
+dss150p_sales_pipeline  2026-10-10T16:45:42+00:00  transform  success  2026-10-10T16:46:35.395279+00:00  2026-10-10T16:46:38.263898+00:00
+dss150p_sales_pipeline  2026-10-10T16:45:42+00:00  load       success  2026-10-10T16:46:38.493446+00:00  2026-10-10T16:46:40.417885+00:00
+dss150p_sales_pipeline  2026-10-10T16:45:42+00:00  validate   success  2026-10-10T16:46:40.641778+00:00  2026-10-10T16:46:41.717986+00:00

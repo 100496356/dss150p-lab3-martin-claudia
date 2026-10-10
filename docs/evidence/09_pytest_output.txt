@@ -1,0 +1,22 @@
+rootdir: /home/claude/lab3
+collecting ... collected 17 items
+
+tests/test_rerun_safe_load.py::test_rerun_does_not_duplicate_or_update PASSED [  5%]
+tests/test_rerun_safe_load.py::test_changed_record_is_updated_not_duplicated PASSED [ 11%]
+tests/test_rerun_safe_load.py::test_load_partition_only_loads_selected_month PASSED [ 17%]
+tests/test_rerun_safe_load.py::test_load_partition_rejects_bad_month PASSED [ 23%]
+tests/test_transform_rules.py::test_dedupe_keeps_latest_version PASSED   [ 29%]
+tests/test_transform_rules.py::test_timestamps_are_parsed_as_utc PASSED  [ 35%]
+tests/test_transform_rules.py::test_email_and_city_normalization PASSED  [ 41%]
+tests/test_transform_rules.py::test_product_category_is_flattened_and_bad_price_quarantined PASSED [ 47%]
+tests/test_transform_rules.py::test_invalid_orders_are_quarantined_with_reason PASSED [ 52%]
+tests/test_transform_rules.py::test_curated_amounts_and_orphans PASSED   [ 58%]
+tests/test_transform_rules.py::test_record_hash_is_stable_across_runs PASSED [ 64%]
+tests/test_transform_rules.py::test_partition_columns PASSED             [ 70%]
+tests/test_validation.py::test_clean_curated_passes PASSED               [ 76%]
+tests/test_validation.py::test_detects_duplicate_and_null_order_id PASSED [ 82%]
+tests/test_validation.py::test_detects_quantity_status_and_negative_amounts PASSED [ 88%]
+tests/test_validation.py::test_detects_missing_audit_fields PASSED       [ 94%]
+tests/test_validation.py::test_empty_dataset_fails PASSED                [100%]
+
+============================== 17 passed in 0.97s ==============================

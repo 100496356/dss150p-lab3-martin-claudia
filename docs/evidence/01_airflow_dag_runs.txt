@@ -1,0 +1,9 @@
+dag_id                  run_id                                state    execution_date             start_date                        end_date
+dss150p_sales_pipeline  evidence_06_recovery                  success  2026-10-10T16:45:46+00:00  2026-10-10T16:47:53.962285+00:00  2026-10-10T16:48:04.040151+00:00
+dss150p_sales_pipeline  evidence_05_failed_load_always        failed   2026-10-10T16:45:44+00:00  2026-10-10T16:46:43.380421+00:00  2026-10-10T16:47:52.929728+00:00
+dss150p_sales_pipeline  evidence_04_retry_transform_once      success  2026-10-10T16:45:42+00:00  2026-10-10T16:46:02.978688+00:00  2026-10-10T16:46:42.343320+00:00
+dss150p_sales_pipeline  evidence_03_full_rerun_idempotent     success  2026-10-10T16:45:41+00:00  2026-10-10T16:45:51.803547+00:00  2026-10-10T16:46:01.941853+00:00
+dss150p_sales_pipeline  evidence_02_full_success              success  2026-10-10T16:45:39+00:00  2026-10-10T16:45:39.703922+00:00  2026-10-10T16:45:50.764325+00:00
+dss150p_sales_pipeline  evidence_01_partition_2026_01b        success  2026-10-10T16:45:06+00:00  2026-10-10T16:45:07.421924+00:00  2026-10-10T16:45:15.446465+00:00
+dss150p_sales_pipeline  evidence_01_partition_2026_01         success  2026-10-10T16:44:06+00:00  2026-10-10T16:44:15.003368+00:00  2026-10-10T16:44:23.231125+00:00
+dss150p_sales_pipeline  scheduled__2026-10-09T02:00:00+00:00  success  2026-10-09T02:00:00+00:00  2026-10-10T16:44:04.901744+00:00  2026-10-10T16:44:14.163943+00:00

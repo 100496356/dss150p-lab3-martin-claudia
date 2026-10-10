@@ -1,0 +1,31 @@
+################ transform attempt=1 (evidence_04_retry_transform_once)
+INFO - Running command: ['/usr/bin/bash', '-c', 'cd /opt/airflow/project && export PIPELINE_RUN_ID="evidence_04_retry_transform_once" FAIL_TASK="transform" FAIL_MODE="once" TRY_NUMBER="1" && python -m src.cli transform']
+INFO - [error] transform failed: Deliberate failure injected in step "transform" (mode=once, try=1)
+INFO -     raise RuntimeError(f'Deliberate failure injected in step "{step}" (mode={mode}, try={try_number})')
+INFO - RuntimeError: Deliberate failure injected in step "transform" (mode=once, try=1)
+INFO - Marking task as UP_FOR_RETRY. dag_id=dss150p_sales_pipeline, task_id=transform, run_id=evidence_04_retry_transform_once, execution_date=20261010T164542, start_date=20261010T164604, end_date=20261010T164604
+################ transform attempt=2 (evidence_04_retry_transform_once)
+INFO - Running command: ['/usr/bin/bash', '-c', 'cd /opt/airflow/project && export PIPELINE_RUN_ID="evidence_04_retry_transform_once" FAIL_TASK="transform" FAIL_MODE="once" TRY_NUMBER="2" && python -m src.cli transform']
+curated=49897 quarantined=104
+INFO - Marking task as SUCCESS. dag_id=dss150p_sales_pipeline, task_id=transform, run_id=evidence_04_retry_transform_once, execution_date=20261010T164542, start_date=20261010T164635, end_date=20261010T164638
+################ load attempt=1 (evidence_05_failed_load_always)
+INFO - Running command: ['/usr/bin/bash', '-c', 'cd /opt/airflow/project && export PIPELINE_RUN_ID="evidence_05_failed_load_always" FAIL_TASK="load" FAIL_MODE="always" TRY_NUMBER="1" && python -m src.cli load']
+INFO - [error] load failed: Deliberate failure injected in step "load" (mode=always, try=1)
+INFO -     raise RuntimeError(f'Deliberate failure injected in step "{step}" (mode={mode}, try={try_number})')
+INFO - RuntimeError: Deliberate failure injected in step "load" (mode=always, try=1)
+INFO - Marking task as UP_FOR_RETRY. dag_id=dss150p_sales_pipeline, task_id=load, run_id=evidence_05_failed_load_always, execution_date=20261010T164544, start_date=20261010T164648, end_date=20261010T164649
+INFO - TASK_RETRY: {"event": "task_retry", "dag_id": "dss150p_sales_pipeline", "run_id": "evidence_05_failed_load_always", "task_id": "load", "try_number": 1, "max_tries": 2, "params": {"run_mode": "full", "year": 2026, "month": 1, "fail_task": "load", "failure_mode": "always"}, "error": "Bash comma
+################ load attempt=2 (evidence_05_failed_load_always)
+INFO - Running command: ['/usr/bin/bash', '-c', 'cd /opt/airflow/project && export PIPELINE_RUN_ID="evidence_05_failed_load_always" FAIL_TASK="load" FAIL_MODE="always" TRY_NUMBER="2" && python -m src.cli load']
+INFO - [error] load failed: Deliberate failure injected in step "load" (mode=always, try=2)
+INFO -     raise RuntimeError(f'Deliberate failure injected in step "{step}" (mode={mode}, try={try_number})')
+INFO - RuntimeError: Deliberate failure injected in step "load" (mode=always, try=2)
+INFO - Marking task as UP_FOR_RETRY. dag_id=dss150p_sales_pipeline, task_id=load, run_id=evidence_05_failed_load_always, execution_date=20261010T164544, start_date=20261010T164719, end_date=20261010T164720
+INFO - TASK_RETRY: {"event": "task_retry", "dag_id": "dss150p_sales_pipeline", "run_id": "evidence_05_failed_load_always", "task_id": "load", "try_number": 2, "max_tries": 2, "params": {"run_mode": "full", "year": 2026, "month": 1, "fail_task": "load", "failure_mode": "always"}, "error": "Bash comma
+################ load attempt=3 (evidence_05_failed_load_always)
+INFO - Running command: ['/usr/bin/bash', '-c', 'cd /opt/airflow/project && export PIPELINE_RUN_ID="evidence_05_failed_load_always" FAIL_TASK="load" FAIL_MODE="always" TRY_NUMBER="3" && python -m src.cli load']
+INFO - [error] load failed: Deliberate failure injected in step "load" (mode=always, try=3)
+INFO -     raise RuntimeError(f'Deliberate failure injected in step "{step}" (mode={mode}, try={try_number})')
+INFO - RuntimeError: Deliberate failure injected in step "load" (mode=always, try=3)
+INFO - Marking task as FAILED. dag_id=dss150p_sales_pipeline, task_id=load, run_id=evidence_05_failed_load_always, execution_date=20261010T164544, start_date=20261010T164750, end_date=20261010T164751
+INFO - TASK_FAILED: {"event": "task_failed", "dag_id": "dss150p_sales_pipeline", "run_id": "evidence_05_failed_load_always", "task_id": "load", "try_number": 3, "max_tries": 2, "params": {"run_mode": "full", "year": 2026, "month": 1, "fail_task": "load", "failure_mode": "always"}, "error": "Bash com

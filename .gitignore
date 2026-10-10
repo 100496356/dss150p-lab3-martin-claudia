@@ -1,0 +1,28 @@
+# Secrets / local config
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Generated pipeline data (reproducible from data/source with the CLI)
+data/raw/
+data/staging/
+data/curated/
+data/quarantine/
+data/partitioned/
+data/runs/
+data/benchmarks/files/
+
+# Airflow runtime
+logs/
+airflow.db
+airflow-webserver.pid
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

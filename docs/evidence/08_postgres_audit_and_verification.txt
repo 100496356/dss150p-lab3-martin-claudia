@@ -1,0 +1,25 @@
+          pipeline_run_id          | status  | rows_staging | rows_curated | rows_quarantined |    duration     |                                           message                                            
+-----------------------------------+---------+--------------+--------------+------------------+-----------------+----------------------------------------------------------------------------------------------
+ evidence_01_partition_2026_01b    | SUCCESS |        49998 |        49897 |              104 | 00:00:06.4947   | validated partition 2026-01: 2506 rows
+ evidence_02_full_success          | SUCCESS |        49998 |        49897 |              104 | 00:00:09.591725 | validated full table: 49897 rows
+ evidence_03_full_rerun_idempotent | SUCCESS |        49998 |        49897 |              104 | 00:00:08.686495 | validated full table: 49897 rows
+ evidence_04_retry_transform_once  | SUCCESS |        49998 |        49897 |              104 | 00:00:37.768196 | validated full table: 49897 rows
+ evidence_05_failed_load_always    | FAILED  |        49998 |        49897 |              104 | 00:01:07.687815 | load failed after 3 tries: Bash command failed. The command returned a non-zero exit code 1.
+ evidence_06_recovery              | SUCCESS |        49998 |        49897 |              104 | 00:00:08.26065  | validated full table: 49897 rows
+(6 rows)
+
+         partition_key          |         loaded_at_utc         | row_count |        pipeline_run_id         
+--------------------------------+-------------------------------+-----------+--------------------------------
+ order_year=2026/order_month=01 | 2026-10-10 16:45:13.284477+00 |      2506 | evidence_01_partition_2026_01b
+(1 row)
+
+ rows  | distinct_order_ids 
+-------+--------------------
+ 49897 |              49897
+(1 row)
+
+ rows_2026_01 
+--------------
+         2506
+(1 row)
+
