@@ -14,7 +14,8 @@ DB = {
     'port': int(os.getenv('POSTGRES_PORT', '5432')),
     'dbname': os.getenv('POSTGRES_DB', 'dss150p'),
     'user': os.getenv('POSTGRES_USER', 'dss150p'),
-    'password': os.getenv('POSTGRES_PASSWORD', 'change_me'),
+    # No default password in code: it must come from .env / the environment.
+    'password': os.getenv('POSTGRES_PASSWORD', ''),
 }
 
 def path_for(key: str) -> Path:

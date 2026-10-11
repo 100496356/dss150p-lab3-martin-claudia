@@ -15,7 +15,9 @@ formats, and runs end to end as an Apache Airflow DAG with parameters, retries a
 | 3. Storage and partitioning | CSV vs JSON Lines vs Parquet vs PostgreSQL benchmark, Parquet partitioned by year/month, load of one selected partition | `src/benchmark/storage.py`, `docs/benchmark_results.csv` |
 | 4. Orchestration | Airflow DAG `dss150p_sales_pipeline` with working parameters, retries, timeouts, failure/retry callbacks | `dags/dss150p_pipeline.py` |
 
-Evidence of every run is in **[docs/RUN_EVIDENCE.md](docs/RUN_EVIDENCE.md)**.
+Evidence of every run is in **[docs/RUN_EVIDENCE.md](docs/RUN_EVIDENCE.md)**. Explanations, the benchmark
+interpretation, the analysis and technical questions, the reflection and the AI-use acknowledgment are in
+**[docs/REPORT.md](docs/REPORT.md)**.
 
 ---
 
@@ -110,24 +112,27 @@ A rerun with the same data affects **0 rows** and never creates duplicates; a ch
 ## 4. Storage comparison and partitioning
 
 Same 49,897 curated rows written in each format, 5 repetitions, **median** times reported.
+Measured on my laptop (Intel Core i7-1165G7, 16 GB RAM, Windows, Docker Desktop, `python:3.11-slim` container).
 Filtered read = only orders with status `DELIVERED`.
 
 | Storage | Size | Write (s) | Full read (s) | Filtered read (s) |
 |---|---|---|---|---|
-| CSV | 14.5 MB | 1.121 | 0.214 | 0.212 |
-| JSON Lines | 31.2 MB | 0.858 | 0.682 | 0.676 |
-| **Parquet** | **5.5 MB** | **0.098** | **0.064** | **0.031** |
-| PostgreSQL | 14.2 MB (table + TOAST) | 1.271 (COPY) | 0.341 | 0.063 |
+| CSV | 15.3 MB | 1.409 | 0.282 | 0.295 |
+| JSON Lines | 31.9 MB | 1.970 | 1.874 | 1.178 |
+| **Parquet** | **5.5 MB** | **0.181** | **0.118** | **0.052** |
+| PostgreSQL | 14.7 MB (table + TOAST) | 1.707 (COPY) | 0.526 | 0.076 |
 
-Parquet is the smallest (2.6× smaller than CSV, 5.7× smaller than JSON) and the fastest to write and read,
+Parquet is the smallest (2.8× smaller than CSV, 5.8× smaller than JSON) and the fastest to write and read,
 because it is columnar, compressed and typed. JSON Lines is the worst because it repeats every key name on
 every line. PostgreSQL is slower for full reads (network protocol), but filtered queries are fast and it is
 the only option that supports concurrent updates, constraints and UPSERT, so it is the right serving layer
 while Parquet is the right analytical file format.
 
-**Partitioning.** `transform` also writes `data/partitioned/sales_order_lines/order_year=YYYY/order_month=MM/`.
-Reading one month (2025-05, 2,540 rows) from the partitioned dataset reads **346 KB in 0.0075 s**,
-versus **5.5 MB in 0.0577 s** when filtering the single Parquet file, about 7.7× faster.
+**Partitioning.** `transform` also writes `data/partitioned/sales_order_lines/order_year=YYYY/order_month=M/`.
+Reading one month (2025-05, 2,540 rows) from the partitioned dataset reads only **346 KB** (16× less data
+than the **5.5 MB** single file), but on my machine it took **0.529 s vs 0.093 s**. The dataset is small and lives
+in a Windows folder mounted into Docker, so opening and listing the 21 partition folders costs more than reading
+5.5 MB once. Partitioning pays off when the data is large or remote; see the discussion in docs/REPORT.md.
 
 **Selected-partition load.** `load-partition --year 2026 --month 1` loaded only 2,506 rows and recorded
 `order_year=2026/order_month=01` in `audit.partition_loads`. Verification query:
@@ -207,3 +212,9 @@ src/extract|transform|validate|load|benchmark|common/
 tests/                     pytest suite
 data/source/               immutable inputs (everything else under data/ is generated and git-ignored)
 ```
+
+## 8. Use of AI tools
+
+As required by section 16 of the lab guide: I used an AI assistant (Claude, by Anthropic) as support for parts of
+the code, debugging and documentation. I ran everything on my own machine, checked the results and I am
+responsible for the submission. Details in [docs/REPORT.md](docs/REPORT.md#use-of-ai-tools).

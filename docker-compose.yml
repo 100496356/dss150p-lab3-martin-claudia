@@ -4,7 +4,7 @@ services:
     container_name: dss150p-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-dss150p}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"

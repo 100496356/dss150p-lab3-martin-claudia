@@ -1,3 +1,3 @@
 method,partition,row_count,bytes_read_or_scanned,median_read_seconds,files_or_partitions
-partitioned parquet (pruned),2025-05,2540,346220,0.0075,21
-single parquet + filter,2025-05,2540,5503765,0.0577,1
+partitioned parquet (pruned),2025-05,2540,346430,0.5288,21
+single parquet + filter,2025-05,2540,5503870,0.0933,1

@@ -5,6 +5,8 @@ from src.config import DB
 
 
 def connect(autocommit: bool = False) -> psycopg.Connection:
+    if not DB['password']:
+        raise RuntimeError('POSTGRES_PASSWORD is not set. Copy .env.example to .env and set a password.')
     return psycopg.connect(
         host=DB['host'], port=DB['port'], dbname=DB['dbname'],
         user=DB['user'], password=DB['password'], autocommit=autocommit, connect_timeout=10,

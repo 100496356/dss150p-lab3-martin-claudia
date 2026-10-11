@@ -11,7 +11,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-dss150p}:${POSTGRES_PASSWORD:-change_me}@postgres/airflow
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-dss150p}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres/airflow
     PYTHONPATH: /opt/airflow/project
     POSTGRES_HOST: postgres
   volumes:

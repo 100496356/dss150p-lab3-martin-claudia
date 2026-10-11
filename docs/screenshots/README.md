@@ -7,3 +7,4 @@ Add here the screenshots taken while running the project with Docker Compose:
 3. Airflow UI grid view showing the successful, retried, failed and recovered runs
 4. Log of the retried task (attempt 1 failed, attempt 2 success)
 5. `git log --oneline`
+6. Airflow grid with the partition runs (`10_airflow_partition_runs.png`)
