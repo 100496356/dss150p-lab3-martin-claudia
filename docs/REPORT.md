@@ -25,7 +25,7 @@ only materializes formats and measures them, and `cli.py` only connects the step
 **How configuration is separated from code.**
 - `config/settings.yml` holds non-secret settings: folder paths, allowed statuses, quantity range, benchmark repetitions and partition columns.
 - `.env` holds environment-specific values and secrets (host, port, database, user, password). Only `.env.example` is committed; `.env` is ignored by Git.
-- `src/config.py` is the only place that reads both and exposes `SETTINGS`, `DB` and `path_for()`. No module hard-codes a path, host or password: `git grep -n "change_me" -- ":(exclude).env.example"` returns nothing.
+- `src/config.py` is the only place that reads both and exposes `SETTINGS`, `DB` and `path_for()`. No module hard-codes a path, host or password: searching the repository for the training password only finds it in `.env.example`.
 - The same code runs on the host and in Docker: on the host `POSTGRES_HOST=localhost`, and Docker Compose overrides it to `postgres` (the service name) for containers.
 
 ## Goal 2: Pipeline and error handling
